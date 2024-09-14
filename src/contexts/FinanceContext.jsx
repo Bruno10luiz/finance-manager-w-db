@@ -1,9 +1,9 @@
 import { createContext, useEffect, useState } from "react"
 import PropTypes from "prop-types"
 
-export const StockContext = createContext({})
+export const FinanceContext = createContext({})
 
-export function StockContextProvider({ children }) {
+export function FinanceContextProvider({ children }) {
     const [income, setIncome] = useState(0)
     const [expense, setExpense] = useState(0)
     const [total, setTotal] = useState(0)
@@ -81,7 +81,7 @@ export function StockContextProvider({ children }) {
         })
     }
 
-    const stock = {
+    const finance = {
         items,
         addItem,
         updateItem,
@@ -92,13 +92,13 @@ export function StockContextProvider({ children }) {
     }
 
     return (
-        <StockContext.Provider value={stock}>
+        <FinanceContext.Provider value={finance}>
             {children}
-        </StockContext.Provider>
+        </FinanceContext.Provider>
     )
 }
 
-StockContextProvider.propTypes = {
+FinanceContextProvider.propTypes = {
     children: PropTypes.node,
 }
 
