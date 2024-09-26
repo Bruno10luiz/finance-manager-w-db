@@ -1,12 +1,12 @@
 import { RouterProvider } from "react-router-dom";
 import router from "./router";
-import { StockContextProvider } from "./contexts/StockContext";
+import { FinanceContextProvider } from "./contexts/FinanceContext";
 
 export default function App() {
   return (
-    <StockContextProvider>
+    <FinanceContextProvider>
       <RouterProvider router={router} />
-    </StockContextProvider>
+    </FinanceContextProvider>
 
   )
 }

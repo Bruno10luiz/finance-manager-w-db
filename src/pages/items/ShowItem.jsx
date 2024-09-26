@@ -7,6 +7,10 @@ export default function ShowItems() {
     const { id } = useParams()
     const item = getItem(id)
 
+    if (!item) {
+        return <div>Carregando...</div>
+    }
+
     return (
         <div className="item">
             <h2>{item.name}</h2>

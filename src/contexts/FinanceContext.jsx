@@ -11,16 +11,23 @@ export function FinanceContextProvider({ children }) {
 
     // Função para buscar os itens da API ao carregar o componente
     useEffect(() => {
-        fetch("http://localhost:3306/")
-            .then((response) => response.json())
+        fetch("http://localhost:3000")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch items")
+                }
+                return response.json()
+            })
             .then((data) => {
-                // Converte as datas recebidas para objetos de Dat
-                const parsedItems = data.map(item => ({
+                const parsedItems = data.map(item => (({
                     ...item,
                     createdAt: new Date(item.createdAt),
                     updatedAt: new Date(item.updatedAt),
-                }))
+                })))
                 setItems(parsedItems)
+            })
+            .catch((error) => {
+                console.error("failed to fetch", error)
             })
     }, [])
 
@@ -40,49 +47,74 @@ export function FinanceContextProvider({ children }) {
         setTotal(total)
     }, [items])
 
+    const getItem = (itemId) => {
+        return items.find(item => item.id === +itemId)
+    }
+
     const addItem = (item) => {
-        fetch("http://localhost:3306/", {
+        fetch("http://localhost:3000/items", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(item),
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to add item")
+                }
+                return response.json()
+            })
             .then((newItem) => {
                 setItems((current) => [newItem, ...current])
+            })
+            .catch((error) => {
+                console.error("Error adding item:", error)
             })
     }
 
     const updateItem = (itemId, newAttributes) => {
-        fetch(`http://localhost:3306/`, {
+        fetch(`http://localhost:3000`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({ id: itemId, ...newAttributes }),
         })
-            .then((response) => response.json())
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to update item")
+                }
+                return response.json()
+            })
             .then((updatedItem) => {
-                setItems((current) => {
-                    const updatedItems = current.map((item) =>
-                        item.id === updatedItem.id ? updatedItem : item
-                    )
-                    return updatedItems
-                })
+                setItems((current) => current.map((item) =>
+                    item.id === updatedItem.id ? updatedItem : item
+                ))
+            })
+            .catch((error) => {
+                console.error("Error updating item:", error)
             })
     }
 
     const deleteItem = (itemId) => {
-        fetch(`http://localhost:3306/${itemId}`, {
+        fetch(`http://localhost:3000`, {
             method: "DELETE",
-        }).then(() => {
-            setItems((current) => current.filter((item) => item.id !== itemId))
         })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Failed to delete item")
+                }
+                setItems((current) => current.filter((item) => item.id !== itemId))
+            })
+            .catch((error) => {
+                console.error("Error deleting item:", error)
+            })
     }
 
     const finance = {
         items,
+        getItem,
         addItem,
         updateItem,
         deleteItem,
